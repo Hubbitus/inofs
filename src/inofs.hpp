@@ -17,7 +17,11 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class InoFS : public fusexx::fuse<InoFS>{
+namespace InoFS{
+
+////////////////////////////////////////////////////////////////////////////////
+
+class InoFS_fuse : public fusexx::fuse<InoFS_fuse>{
 public:
 static const char* Version; // Inicialisation in .cpp file (see http://bytes.com/groups/cpp/534669-const-char-static-member)
 // To store our REP and WC path
@@ -28,11 +32,18 @@ enum{
     KEY_HELP, KEY_VERSION, KEY_LOGFILE, KEY_NONEMPTY
 };
 
-     InoFS(); // Constructor
+     InoFS_fuse(); // Constructor
 
      void translate_path(const char* path);
      void usage(const char* progname);
 
+     /*
+     * Main advantages to REimplement fuse_mnt_check_empty(..) (and detect code
+     * initially got from it) but I can't just call it - empty/nonempty directories
+     * treatment is absoluteley different (fuse function directly write
+     * error-message to stderr)
+     **/
+     virtual void checkDirEmpty(const char *dir);
      virtual void preinit();
      /**
      *
@@ -76,4 +87,5 @@ private:
 std::string m_strTranslatedPath;
 };
 
+} //namespace InoFS
 #endif	/* _InoFS_HPP */

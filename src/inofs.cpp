@@ -8,41 +8,82 @@
 **/
 #include "inofs.hpp"
 #include "shared.hpp"
-
+#include "inofs.exceptions.hpp"
 
 #include <iostream> //Standard stream manipulation
 
 #include <string>
 // # include <string.h>
 
+#include <sys/stat.h> //+ S_ISDIR macroses and states
+
 #include <stdlib.h> //+Hu: memset
 #include <dirent.h>
 #include <sys/xattr.h>
 
 #include <boost/regex.hpp> //Parse options, exclude files
+#include <boost/format.hpp>
 ////////////////////////////////////////////////////////////////////////////////
 
-using namespace std;
+namespace InoFS{
 
 ////////////////////////////////////////////////////////////////////////////////
 
-const char* InoFS::Version = "0.1";
+const char* InoFS_fuse::Version = "0.1";
 
 ////////////////////////////////////////////////////////////////////////////////
-InoFS::InoFS()
+InoFS_fuse::InoFS_fuse()
     : REPdir(0), WCdir(0){ // Constructor
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void
-InoFS::preinit(){
+InoFS_fuse::preinit(){
 LOG->addToLog("Filesystem preinit;");
 system((". ~/.rsync_shared_options ; rsync $RSYNC_SHARED_OPTIONS " + std::string(self->REPdir) + " " + std::string(self->WCdir)).c_str());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void
+InoFS_fuse::checkDirEmpty(const char *dir){
+int isempty = 1;
+
+struct stat stbuf;
+	if (lstat(dir, &stbuf) == -1) {
+//	fprintf(stderr ,"Inofs: failed to access mountpoint %s: %s\n", dir, strerror(errno));
+	throw inofs_exception(
+		(
+		boost::format("InoFS: failed to access mountpointInofs: failed to access mountpoint '%1%': %2%") % dir % strerror(errno)
+		).str()
+	);
+	}
+
+	if (S_ISDIR(stbuf.st_mode)) {
+	struct dirent *ent;
+	DIR *dp = opendir(dir);
+		if (dp == NULL) throw inofs_exception( std::string("InoFS: failed to open mountpoint for reading: " + std::string(strerror(errno))) );
+		while ((ent = readdir(dp)) != NULL) {
+			if (
+				strcmp(ent->d_name, ".") != 0 &&
+				strcmp(ent->d_name, "..") != 0) {
+			isempty = 0;
+			break;
+			}
+		}
+	closedir(dp);
+	}
+	else if (stbuf.st_size){
+	isempty = 0;
+	}
+
+	if (!isempty) {
+
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void *
-InoFS::op_init (struct fuse_conn_info *conn){
+InoFS_fuse::op_init (struct fuse_conn_info *conn){
 // Does NOT work
 //    std::cerr << "Filesystem mounted" << std::endl;
 // Work, but ugly
@@ -55,7 +96,7 @@ return 0;
 ////////////////////////////////////////////////////////////////////////////////
 // Translate an rofs path into it's underlying filesystem path
 void
-InoFS::translate_path(const char* path){
+InoFS_fuse::translate_path(const char* path){
 /*
     char *rPath = (char *)malloc(sizeof(char)*(strlen(path)+strlen(rw_path)+1));
 
@@ -72,7 +113,7 @@ self->m_strTranslatedPath = self->REPdir + std::string(path);
 
 ////////////////////////////////////////////////////////////////////////////////
 void
-InoFS::usage(const char* progname){
+InoFS_fuse::usage(const char* progname){
 fprintf(stdout,
 "usage: %s REPdir WCdir [options]\n"
 "\n"
@@ -89,8 +130,8 @@ fprintf(stdout,
 
 ////////////////////////////////////////////////////////////////////////////////
 int
-InoFS::parse_opt(void *data, const char *arg, int key, struct fuse_args *outargs){
-InoFS * self = (InoFS *)data;
+InoFS_fuse::parse_opt(void *data, const char *arg, int key, struct fuse_args *outargs){
+InoFS_fuse * self = (InoFS_fuse *)data;
 
 	switch (key){
 		case FUSE_OPT_KEY_NONOPT:
@@ -129,7 +170,7 @@ InoFS * self = (InoFS *)data;
 		exit(0);
 
 		case KEY_VERSION:
-		fprintf(stdout, "ROFS version %s\n", InoFS::Version);
+		fprintf(stdout, "ROFS version %s\n", InoFS_fuse::Version);
 		exit(0);
 
 		default:
@@ -143,7 +184,7 @@ return 1;
 ////////////////////// FUSE operations methods
 ////////////////////////////////////////////////////////////////////////////////
 int
-InoFS::op_getattr(const char *path, struct stat *stbuf){
+InoFS_fuse::op_getattr(const char *path, struct stat *stbuf){
 self->translate_path(path);
 LOG->addToLog("InoFS::op_getattr. Path: " + self->m_strTranslatedPath);
 
@@ -156,7 +197,7 @@ return 0;
 
 ////////////////////////////////////////////////////////////////////////////////
 int
-InoFS::op_fgetattr(const char *path, struct stat *stbuf, struct fuse_file_info *fi){
+InoFS_fuse::op_fgetattr(const char *path, struct stat *stbuf, struct fuse_file_info *fi){
 //self->translate_path(path);
 LOG->addToLog("InoFS::op_fgetattr. Path: -" + std::string(path));
 
@@ -169,7 +210,7 @@ return 0;
 
 ////////////////////////////////////////////////////////////////////////////////
 int
-InoFS::op_access(const char *path, int mask){
+InoFS_fuse::op_access(const char *path, int mask){
 self->translate_path(path);
 LOG->addToLog("InoFS::op_access. Path: " + self->m_strTranslatedPath);
 
@@ -182,7 +223,7 @@ return 0;
 
 ////////////////////////////////////////////////////////////////////////////////
 int
-InoFS::op_readlink(const char *path, char *buf, size_t size){
+InoFS_fuse::op_readlink(const char *path, char *buf, size_t size){
 self->translate_path(path);
 LOG->addToLog("InoFS::op_readlink. Path: " + self->m_strTranslatedPath);
 
@@ -196,7 +237,7 @@ return 0;
 
 ////////////////////////////////////////////////////////////////////////////////
 int
-InoFS::op_opendir(const char *path, struct fuse_file_info *fi){
+InoFS_fuse::op_opendir(const char *path, struct fuse_file_info *fi){
 self->translate_path(path);
 LOG->addToLog("InoFS::op_opendir. Path: " + self->m_strTranslatedPath);
 
@@ -210,7 +251,7 @@ return 0;
 
 ////////////////////////////////////////////////////////////////////////////////
 int
-InoFS::op_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi){
+InoFS_fuse::op_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi){
 //self->translate_path(path);
 LOG->addToLog("InoFS::op_readdir. Path: -" + std::string(path));
 
@@ -232,7 +273,7 @@ return 0;
 
 ////////////////////////////////////////////////////////////////////////////////
 int
-InoFS::op_releasedir(const char *path, struct fuse_file_info *fi){
+InoFS_fuse::op_releasedir(const char *path, struct fuse_file_info *fi){
 //self->translate_path(path);
 LOG->addToLog("InoFS::op_releasedir. Path: -" + std::string(path));
 
@@ -243,7 +284,7 @@ return 0;
 
 ////////////////////////////////////////////////////////////////////////////////
 int
-InoFS::op_mknod(const char *path, mode_t mode, dev_t rdev){
+InoFS_fuse::op_mknod(const char *path, mode_t mode, dev_t rdev){
 self->translate_path(path);
 LOG->addToLog("InoFS::op_mknod. Path: " + self->m_strTranslatedPath);
 
@@ -256,7 +297,7 @@ return 0;
 
 ////////////////////////////////////////////////////////////////////////////////
 int
-InoFS::op_mkdir(const char *path, mode_t mode){
+InoFS_fuse::op_mkdir(const char *path, mode_t mode){
 self->translate_path(path);
 LOG->addToLog("InoFS::op_mknod. Path: " + self->m_strTranslatedPath);
 
@@ -269,7 +310,7 @@ return 0;
 
 ////////////////////////////////////////////////////////////////////////////////
 int
-InoFS::op_unlink(const char *path){
+InoFS_fuse::op_unlink(const char *path){
 self->translate_path(path);
 LOG->addToLog("InoFS::op_unlink. Path: " + self->m_strTranslatedPath);
 
@@ -282,7 +323,7 @@ return 0;
 
 ////////////////////////////////////////////////////////////////////////////////
 int
-InoFS::op_rmdir(const char *path){
+InoFS_fuse::op_rmdir(const char *path){
 self->translate_path(path);
 LOG->addToLog("InoFS::op_rmdir. Path: " + self->m_strTranslatedPath);
 
@@ -295,7 +336,7 @@ return 0;
 
 ////////////////////////////////////////////////////////////////////////////////
 int
-InoFS::op_symlink(const char *from, const char *to){
+InoFS_fuse::op_symlink(const char *from, const char *to){
 //self->translate_path(path);
 LOG->addToLog("InoFS::op_symlink. From: -" + std::string(from) + " to- " + std::string(to));
 
@@ -308,7 +349,7 @@ return 0;
 
 ////////////////////////////////////////////////////////////////////////////////
 int
-InoFS::op_rename(const char *from, const char *to){
+InoFS_fuse::op_rename(const char *from, const char *to){
 LOG->addToLog("InoFS::op_rename. From: -" + std::string(from) + " to- " + std::string(to));
 //self->translate_path(path);
 
@@ -321,7 +362,7 @@ return 0;
 
 ////////////////////////////////////////////////////////////////////////////////
 int
-InoFS::op_link(const char *from, const char *to){
+InoFS_fuse::op_link(const char *from, const char *to){
 //self->translate_path(path);
 LOG->addToLog("InoFS::op_link. From: -" + std::string(from) + " to- " + std::string(to));
 
@@ -334,7 +375,7 @@ return 0;
 
 ////////////////////////////////////////////////////////////////////////////////
 int
-InoFS::op_chmod(const char *path, mode_t mode){
+InoFS_fuse::op_chmod(const char *path, mode_t mode){
 self->translate_path(path);
 LOG->addToLog("InoFS::op_chmod. Path: " + self->m_strTranslatedPath);
 
@@ -347,7 +388,7 @@ return 0;
 
 ////////////////////////////////////////////////////////////////////////////////
 int
-InoFS::op_chown(const char *path, uid_t uid, gid_t gid){
+InoFS_fuse::op_chown(const char *path, uid_t uid, gid_t gid){
 self->translate_path(path);
 LOG->addToLog("InoFS::op_chown. Path: " + self->m_strTranslatedPath);
 
@@ -360,7 +401,7 @@ return 0;
 
 ////////////////////////////////////////////////////////////////////////////////
 int
-InoFS::op_truncate(const char *path, off_t size){
+InoFS_fuse::op_truncate(const char *path, off_t size){
 self->translate_path(path);
 LOG->addToLog("InoFS::op_truncate. Path: " + self->m_strTranslatedPath);
 
@@ -373,7 +414,7 @@ return 0;
 
 ////////////////////////////////////////////////////////////////////////////////
 int
-InoFS::op_ftruncate(const char *path, off_t size, struct fuse_file_info *fi){
+InoFS_fuse::op_ftruncate(const char *path, off_t size, struct fuse_file_info *fi){
 //self->translate_path(path);
 LOG->addToLog("InoFS::op_ftruncate. Path: -" + std::string(path));
 
@@ -386,7 +427,7 @@ return 0;
 
 ////////////////////////////////////////////////////////////////////////////////
 int
-InoFS::op_utime(const char *path, struct utimbuf *buf){
+InoFS_fuse::op_utime(const char *path, struct utimbuf *buf){
 self->translate_path(path);
 LOG->addToLog("InoFS::op_utime. Path: " + self->m_strTranslatedPath);
 
@@ -399,7 +440,7 @@ return 0;
 
 ////////////////////////////////////////////////////////////////////////////////
 int
-InoFS::op_create(const char *path, mode_t mode, struct fuse_file_info *fi){
+InoFS_fuse::op_create(const char *path, mode_t mode, struct fuse_file_info *fi){
 self->translate_path(path);
 LOG->addToLog("InoFS::op_create. Path: " + self->m_strTranslatedPath);
 
@@ -416,7 +457,7 @@ return 0;
 
 ////////////////////////////////////////////////////////////////////////////////
 int
-InoFS::op_open(const char *path, struct fuse_file_info *fi){
+InoFS_fuse::op_open(const char *path, struct fuse_file_info *fi){
 //self->translate_path(path); //There not needed, it is done in creeate
 LOG->addToLog("InoFS::op_open. Path: " + self->m_strTranslatedPath);
 
@@ -425,7 +466,7 @@ return op_create(path, 0, fi);
 
 ////////////////////////////////////////////////////////////////////////////////
 int
-InoFS::op_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi){
+InoFS_fuse::op_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi){
 //self->translate_path(path);
 LOG->addToLog("InoFS::op_read. Path: -" + std::string(path));
 
@@ -438,7 +479,7 @@ return res;
 
 ////////////////////////////////////////////////////////////////////////////////
 int
-InoFS::op_write(const char *path, const char *buf, size_t size, off_t offset, struct fuse_file_info *fi){
+InoFS_fuse::op_write(const char *path, const char *buf, size_t size, off_t offset, struct fuse_file_info *fi){
 self->translate_path(path);
 LOG->addToLog("InoFS::op_write. Path: " + self->m_strTranslatedPath);
 
@@ -451,7 +492,7 @@ return res;
 
 ////////////////////////////////////////////////////////////////////////////////
 int
-InoFS::op_statfs(const char *path, struct statvfs *stbuf){
+InoFS_fuse::op_statfs(const char *path, struct statvfs *stbuf){
 self->translate_path(path);
 LOG->addToLog("InoFS::op_statfs. Path: " + self->m_strTranslatedPath);
 
@@ -464,7 +505,7 @@ return 0;
 
 ////////////////////////////////////////////////////////////////////////////////
 int
-InoFS::op_flush(const char *path, struct fuse_file_info *fi){
+InoFS_fuse::op_flush(const char *path, struct fuse_file_info *fi){
 //self->translate_path(path);
 LOG->addToLog("InoFS::op_flush. Path: -" + std::string(path));
 
@@ -482,7 +523,7 @@ return 0;
 
 ////////////////////////////////////////////////////////////////////////////////
 int
-InoFS::op_release(const char *path, struct fuse_file_info *fi){
+InoFS_fuse::op_release(const char *path, struct fuse_file_info *fi){
 //self->translate_path(path);
 LOG->addToLog("InoFS::op_release. Path: -" + std::string(path));
 
@@ -493,7 +534,7 @@ return 0;
 
 ////////////////////////////////////////////////////////////////////////////////
 int
-InoFS::op_fsync(const char *path, int isdatasync, struct fuse_file_info *fi){
+InoFS_fuse::op_fsync(const char *path, int isdatasync, struct fuse_file_info *fi){
 //self->translate_path(path);
 LOG->addToLog("InoFS::op_fsync. Path: -" + std::string(path));
 
@@ -511,7 +552,7 @@ return 0;
 
 ////////////////////////////////////////////////////////////////////////////////
 int
-InoFS::op_setxattr(const char *path, const char *name, const char *value, size_t size, int flags){
+InoFS_fuse::op_setxattr(const char *path, const char *name, const char *value, size_t size, int flags){
 self->translate_path(path);
 LOG->addToLog("InoFS::op_setxattr. Path: " + self->m_strTranslatedPath);
 
@@ -524,7 +565,7 @@ return 0;
 
 ////////////////////////////////////////////////////////////////////////////////
 int
-InoFS::op_getxattr(const char *path, const char *name, char *value, size_t size){
+InoFS_fuse::op_getxattr(const char *path, const char *name, char *value, size_t size){
 self->translate_path(path);
 LOG->addToLog("InoFS::op_getxattr. Path: " + self->m_strTranslatedPath);
 
@@ -537,7 +578,7 @@ return res;
 
 ////////////////////////////////////////////////////////////////////////////////
 int
-InoFS::op_listxattr(const char *path, char *list, size_t size){
+InoFS_fuse::op_listxattr(const char *path, char *list, size_t size){
 self->translate_path(path);
 LOG->addToLog("InoFS::op_listxattr. Path: " + self->m_strTranslatedPath);
 
@@ -550,7 +591,7 @@ return res;
 
 ////////////////////////////////////////////////////////////////////////////////
 int
-InoFS::op_removexattr(const char *path, const char *name){
+InoFS_fuse::op_removexattr(const char *path, const char *name){
 self->translate_path(path);
 LOG->addToLog("InoFS::op_removexattr. Path: " + self->m_strTranslatedPath);
 
@@ -560,3 +601,5 @@ int res = lremovexattr(self->m_strTranslatedPath.c_str(), name);
 
 return 0;
 }
+
+} //namespace InoFS

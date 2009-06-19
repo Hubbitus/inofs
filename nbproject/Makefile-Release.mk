@@ -31,6 +31,7 @@ OBJECTDIR=build/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/src/inofs.exceptions.o \
 	${OBJECTDIR}/src/Utils/log/log.o \
 	${OBJECTDIR}/src/main.o \
 	${OBJECTDIR}/src/Utils/Singleton/Singleton.o \
@@ -59,6 +60,11 @@ LDLIBSOPTIONS=
 dist/Release/GNU-Linux-x86/inofs.fusexx: ${OBJECTFILES}
 	${MKDIR} -p dist/Release/GNU-Linux-x86
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/inofs.fusexx ${OBJECTFILES} ${LDLIBSOPTIONS} 
+
+${OBJECTDIR}/src/inofs.exceptions.o: src/inofs.exceptions.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/inofs.exceptions.o src/inofs.exceptions.cpp
 
 ${OBJECTDIR}/src/Utils/log/log.o: src/Utils/log/log.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/Utils/log

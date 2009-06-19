@@ -18,6 +18,8 @@
       </logicalFolder>
       <itemPath>src/fusexx.hpp</itemPath>
       <itemPath>src/inofs.cpp</itemPath>
+      <itemPath>src/inofs.exceptions.cpp</itemPath>
+      <itemPath>src/inofs.exceptions.hpp</itemPath>
       <itemPath>src/inofs.hpp</itemPath>
       <itemPath>src/inofs1.hpp</itemPath>
       <itemPath>src/main.cpp</itemPath>
