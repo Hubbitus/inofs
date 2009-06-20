@@ -6,9 +6,9 @@
 *
 * Many thanks to rofs, sshfs, virtualfs-c++ projects I'm gott many useful info and examples from its
 **/
-#include "inofs.hpp"
-#include "shared.hpp"
-#include "inofs.exceptions.hpp"
+#include "InoFS.hpp"
+#include "InoFS.shared.hpp"
+#include "InoFS.exceptions.hpp"
 
 #include <iostream> //Standard stream manipulation
 
@@ -32,8 +32,10 @@ namespace InoFS{
 const char* InoFS_fuse::Version = "0.1";
 
 ////////////////////////////////////////////////////////////////////////////////
-InoFS_fuse::InoFS_fuse()
-    : REPdir(0), WCdir(0){ // Constructor
+InoFS_fuse::InoFS_fuse(boost::shared_ptr<InoFS_options> opt)
+    : REPdir(0), WCdir(0){// Constructor
+	if (opt) opts_ = opt;
+	opts_ = boost::shared_ptr<InoFS_options>(new InoFS_options());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -44,24 +46,24 @@ system((". ~/.rsync_shared_options ; rsync $RSYNC_SHARED_OPTIONS " + std::string
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void
-InoFS_fuse::checkDirEmpty(const char *dir){
+bool
+InoFS_fuse::checkIfMountpointEmpty() throw(){
 int isempty = 1;
 
 struct stat stbuf;
-	if (lstat(dir, &stbuf) == -1) {
+	if (lstat(self->WCdir, &stbuf) == -1) {
 //	fprintf(stderr ,"Inofs: failed to access mountpoint %s: %s\n", dir, strerror(errno));
 	throw inofs_exception(
 		(
-		boost::format("InoFS: failed to access mountpointInofs: failed to access mountpoint '%1%': %2%") % dir % strerror(errno)
+		boost::format("%1%: failed to access mountpoint '%2%': %3%") % opts_->fsname % self->WCdir % strerror(errno)
 		).str()
 	);
 	}
 
 	if (S_ISDIR(stbuf.st_mode)) {
 	struct dirent *ent;
-	DIR *dp = opendir(dir);
-		if (dp == NULL) throw inofs_exception( std::string("InoFS: failed to open mountpoint for reading: " + std::string(strerror(errno))) );
+	DIR *dp = opendir(self->WCdir);
+		if (dp == NULL) throw inofs_exception( opts_->fsname + ": failed to open mountpoint for reading: " + std::string(strerror(errno)) );
 		while ((ent = readdir(dp)) != NULL) {
 			if (
 				strcmp(ent->d_name, ".") != 0 &&
@@ -76,9 +78,7 @@ struct stat stbuf;
 	isempty = 0;
 	}
 
-	if (!isempty) {
-
-	}
+return isempty;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -113,19 +113,17 @@ self->m_strTranslatedPath = self->REPdir + std::string(path);
 
 ////////////////////////////////////////////////////////////////////////////////
 void
-InoFS_fuse::usage(const char* progname){
-fprintf(stdout,
-"usage: %s REPdir WCdir [options]\n"
-"\n"
-"   Mounts REPdir to WCdir mountpoint\n"
-"\n"
-"general options:\n"
-"   -o opt,[opt...]		mount options\n"
-"   -h  --help			print help\n"
-"   -V  --version		print version\n"
-"   -l  --logfile=<filename>		set logfile\n"
-"   -n  --nonempty		analogue -o nonempty\n"
-"\n", progname);
+InoFS_fuse::usage(){
+std::cout << "usage: " << opts_->fsname << " REPdir WCdir [options]" << std::endl
+	<< std::endl
+	<< "   Mounts REPdir to WCdir mountpoint" << std::endl
+	<< std::endl
+	<< "general options:" << std::endl
+	<< "   -o opt,[opt...]		mount options" << std::endl
+	<< "   -h  --help			print help" << std::endl
+	<< "   -V  --version		print version" << std::endl
+	<< "   -l  --logfile=<filename>		set logfile" << std::endl
+	<< "   -n  --nonempty		analogue -o nonempty\n"  << std::endl << std::endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -166,16 +164,20 @@ InoFS_fuse * self = (InoFS_fuse *)data;
 		break;//KEY_LOGFILE
 
 		case KEY_HELP:
-		self->usage(outargs->argv[0]);
-		exit(0);
+		self->usage();
+		std::exit(0);
+
+		case KEY_NONEMPTY:
+//?		self->opts nonempty =
+		std::exit(0);
 
 		case KEY_VERSION:
-		fprintf(stdout, "ROFS version %s\n", InoFS_fuse::Version);
-		exit(0);
+		std::cout << "ROFS version: " << InoFS_fuse::Version;
+		std::exit(0);
 
 		default:
-		fprintf(stderr, "see `%s -h' for usage\n", outargs->argv[0]);
-		exit(1);
+		std::cerr << "see '" << outargs->argv[0] << " -h' for usage" << std::endl;
+		std::exit(1);
 	}
 return 1;
 }

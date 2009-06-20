@@ -17,13 +17,15 @@
         </logicalFolder>
       </logicalFolder>
       <itemPath>src/fusexx.hpp</itemPath>
-      <itemPath>src/inofs.cpp</itemPath>
-      <itemPath>src/inofs.exceptions.cpp</itemPath>
-      <itemPath>src/inofs.exceptions.hpp</itemPath>
-      <itemPath>src/inofs.hpp</itemPath>
+      <itemPath>src/InoFS.cpp</itemPath>
+      <itemPath>src/InoFS.exceptions.cpp</itemPath>
+      <itemPath>src/InoFS.exceptions.hpp</itemPath>
+      <itemPath>src/InoFS.hpp</itemPath>
+      <itemPath>src/InoFS.shared.hpp</itemPath>
       <itemPath>src/inofs1.hpp</itemPath>
+      <itemPath>src/InoFS_options.cpp</itemPath>
+      <itemPath>src/InoFS_options.hpp</itemPath>
       <itemPath>src/main.cpp</itemPath>
-      <itemPath>src/shared.hpp</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

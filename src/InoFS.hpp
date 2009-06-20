@@ -12,9 +12,10 @@
 
 #include "fusexx.hpp"
 #include "Utils/log/log.hpp"
+#include "InoFS_options.hpp"
 
 #include <string>
-
+#include <boost/shared_ptr.hpp>
 ////////////////////////////////////////////////////////////////////////////////
 
 namespace InoFS{
@@ -32,10 +33,10 @@ enum{
     KEY_HELP, KEY_VERSION, KEY_LOGFILE, KEY_NONEMPTY
 };
 
-     InoFS_fuse(); // Constructor
+     InoFS_fuse(boost::shared_ptr<InoFS_options> opt); // Constructor
 
      void translate_path(const char* path);
-     void usage(const char* progname);
+     void usage();
 
      /*
      * Main advantages to REimplement fuse_mnt_check_empty(..) (and detect code
@@ -43,7 +44,7 @@ enum{
      * treatment is absoluteley different (fuse function directly write
      * error-message to stderr)
      **/
-     virtual void checkDirEmpty(const char *dir);
+     virtual bool checkIfMountpointEmpty() throw();
      virtual void preinit();
      /**
      *
@@ -85,6 +86,7 @@ enum{
 
 private:
 std::string m_strTranslatedPath;
+boost::shared_ptr<InoFS_options> opts_;
 };
 
 } //namespace InoFS
