@@ -10,11 +10,20 @@
 
 #include <exception>
 
-class inofs_exception : public std::runtime_error{
+namespace InoFS{
+
+class InoFS_exception : public std::runtime_error{
 public:
-     explicit inofs_exception(const std::string& __arg)
+     explicit InoFS_exception(const std::string& __arg)
 	  : std::runtime_error(__arg){}// http://bbs.archlinux.org/viewtopic.php?pid=213624
 };
 
+class InoFS_nonemptymountpoint_exception : public InoFS_exception{
+public:
+     explicit InoFS_nonemptymountpoint_exception(const std::string& __arg)
+	  : InoFS_exception(__arg){}
+};
+
+} //namespace InoFS
 #endif	/* _INOFS_EXCEPTIONS_HPP */
 

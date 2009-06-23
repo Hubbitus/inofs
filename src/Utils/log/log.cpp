@@ -15,6 +15,11 @@
 #include <unistd.h>
 
 ////////////////////////////////////////////////////////////////////////////////
+
+namespace InoFS{
+namespace Utils{
+
+////////////////////////////////////////////////////////////////////////////////
 log::log(std::string filename)
 	: filename_(filename){
 }
@@ -82,3 +87,6 @@ void
 log::suffix(std::ofstream& s){
 s << std::endl;
 }
+
+}//namespace Utils{
+}//namespace InoFS{

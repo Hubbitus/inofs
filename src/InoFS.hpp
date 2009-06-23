@@ -45,7 +45,7 @@ enum{
      * error-message to stderr)
      **/
      virtual bool checkIfMountpointEmpty() throw();
-     virtual void preinit();
+     virtual void preinit() throw();
      /**
      *
      **/

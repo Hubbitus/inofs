@@ -40,9 +40,20 @@ InoFS_fuse::InoFS_fuse(boost::shared_ptr<InoFS_options> opt)
 
 ////////////////////////////////////////////////////////////////////////////////
 void
-InoFS_fuse::preinit(){
+InoFS_fuse::preinit() throw(){
 LOG->addToLog("Filesystem preinit;");
-system((". ~/.rsync_shared_options ; rsync $RSYNC_SHARED_OPTIONS " + std::string(self->REPdir) + " " + std::string(self->WCdir)).c_str());
+	if (!checkIfMountpointEmpty()){
+	std::cout << "Mountpoint directory is not empty!" << std::endl
+		<< "Please note, it is not problem for InoFS in most cases opposite to many other fuse filesystems."  << std::endl
+		<< "You just must be enshured what you mount appropriate REPdir to appropriate WCdir (mountpoint)"  << std::endl
+		<< "All content in mountpoint will be syncronised (and may be even deleted, if it deleted in REP)"  << std::endl
+		<< "If you shure what dirs appropriate, please provide -n (or --nonempty) additional option"  << std::endl;
+//	throw InoFS_nonemptymountpoint_exception(std::string("Mountpoint directory is not empty!"));
+	}
+	else{// Ok. Emulate for fuse '-o nonempty' option
+
+	}
+system(std::string(". ~/.rsync_shared_options ; rsync $RSYNC_SHARED_OPTIONS " + std::string(self->REPdir) + " " + std::string(self->WCdir)).c_str());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -51,19 +62,19 @@ InoFS_fuse::checkIfMountpointEmpty() throw(){
 int isempty = 1;
 
 struct stat stbuf;
-	if (lstat(self->WCdir, &stbuf) == -1) {
+	if (lstat(WCdir, &stbuf) == -1) {
 //	fprintf(stderr ,"Inofs: failed to access mountpoint %s: %s\n", dir, strerror(errno));
-	throw inofs_exception(
+	throw InoFS_exception(
 		(
-		boost::format("%1%: failed to access mountpoint '%2%': %3%") % opts_->fsname % self->WCdir % strerror(errno)
+		boost::format("%1%: failed to access mountpoint '%2%': %3%") % opts_->fsname % WCdir % strerror(errno)
 		).str()
 	);
 	}
 
 	if (S_ISDIR(stbuf.st_mode)) {
 	struct dirent *ent;
-	DIR *dp = opendir(self->WCdir);
-		if (dp == NULL) throw inofs_exception( opts_->fsname + ": failed to open mountpoint for reading: " + std::string(strerror(errno)) );
+	DIR *dp = opendir(WCdir);
+		if (dp == NULL) throw InoFS_exception( opts_->fsname + ": failed to open mountpoint for reading: " + std::string(strerror(errno)) );
 		while ((ent = readdir(dp)) != NULL) {
 			if (
 				strcmp(ent->d_name, ".") != 0 &&
@@ -79,18 +90,6 @@ struct stat stbuf;
 	}
 
 return isempty;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void *
-InoFS_fuse::op_init (struct fuse_conn_info *conn){
-// Does NOT work
-//    std::cerr << "Filesystem mounted" << std::endl;
-// Work, but ugly
-//    system("echo 'test' > /home/pasha/tttttttt");
-
-LOG->addToLog("Filesystem mounted: \"" + std::string(self->REPdir) + "\" to \"" + std::string(self->WCdir) + "\"");
-return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -184,6 +183,19 @@ return 1;
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////// FUSE operations methods
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+void *
+InoFS_fuse::op_init (struct fuse_conn_info *conn){
+// Does NOT work
+//    std::cerr << "Filesystem mounted" << std::endl;
+// Work, but ugly
+//    system("echo 'test' > /home/pasha/tttttttt");
+
+LOG->addToLog("Filesystem mounted: \"" + std::string(self->REPdir) + "\" to \"" + std::string(self->WCdir) + "\"");
+return 0;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 int
 InoFS_fuse::op_getattr(const char *path, struct stat *stbuf){

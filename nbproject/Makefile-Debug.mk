@@ -31,11 +31,12 @@ OBJECTDIR=build/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/src/inofs.exceptions.o \
 	${OBJECTDIR}/src/Utils/log/log.o \
 	${OBJECTDIR}/src/main.o \
+	${OBJECTDIR}/src/InoFS.exceptions.o \
+	${OBJECTDIR}/src/InoFS_options.o \
 	${OBJECTDIR}/src/Utils/Singleton/Singleton.o \
-	${OBJECTDIR}/src/inofs.o
+	${OBJECTDIR}/src/InoFS.o
 
 # C Compiler Flags
 CFLAGS=
@@ -61,30 +62,35 @@ dist/Debug/GNU-Linux-x86/inofs: ${OBJECTFILES}
 	${MKDIR} -p dist/Debug/GNU-Linux-x86
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/inofs ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
-${OBJECTDIR}/src/inofs.exceptions.o: src/inofs.exceptions.cpp 
-	${MKDIR} -p ${OBJECTDIR}/src
-	${RM} $@.d
-	$(COMPILE.cc) -g -Wall -D_FILE_OFFSET_BITS=64 -I/usr/include/fuse -I/usr/include -Isrc -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/inofs.exceptions.o src/inofs.exceptions.cpp
-
 ${OBJECTDIR}/src/Utils/log/log.o: src/Utils/log/log.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/Utils/log
 	${RM} $@.d
-	$(COMPILE.cc) -g -Wall -D_FILE_OFFSET_BITS=64 -I/usr/include/fuse -I/usr/include -Isrc -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/Utils/log/log.o src/Utils/log/log.cpp
+	$(COMPILE.cc) -g -Wall -D_FILE_OFFSET_BITS=64 -I/usr/include/fuse -Isrc -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/Utils/log/log.o src/Utils/log/log.cpp
 
 ${OBJECTDIR}/src/main.o: src/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src
 	${RM} $@.d
-	$(COMPILE.cc) -g -Wall -D_FILE_OFFSET_BITS=64 -I/usr/include/fuse -I/usr/include -Isrc -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/main.o src/main.cpp
+	$(COMPILE.cc) -g -Wall -D_FILE_OFFSET_BITS=64 -I/usr/include/fuse -Isrc -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/main.o src/main.cpp
+
+${OBJECTDIR}/src/InoFS.exceptions.o: src/InoFS.exceptions.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src
+	${RM} $@.d
+	$(COMPILE.cc) -g -Wall -D_FILE_OFFSET_BITS=64 -I/usr/include/fuse -Isrc -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/InoFS.exceptions.o src/InoFS.exceptions.cpp
+
+${OBJECTDIR}/src/InoFS_options.o: src/InoFS_options.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src
+	${RM} $@.d
+	$(COMPILE.cc) -g -Wall -D_FILE_OFFSET_BITS=64 -I/usr/include/fuse -Isrc -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/InoFS_options.o src/InoFS_options.cpp
 
 ${OBJECTDIR}/src/Utils/Singleton/Singleton.o: src/Utils/Singleton/Singleton.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/Utils/Singleton
 	${RM} $@.d
-	$(COMPILE.cc) -g -Wall -D_FILE_OFFSET_BITS=64 -I/usr/include/fuse -I/usr/include -Isrc -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/Utils/Singleton/Singleton.o src/Utils/Singleton/Singleton.cpp
+	$(COMPILE.cc) -g -Wall -D_FILE_OFFSET_BITS=64 -I/usr/include/fuse -Isrc -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/Utils/Singleton/Singleton.o src/Utils/Singleton/Singleton.cpp
 
-${OBJECTDIR}/src/inofs.o: src/inofs.cpp 
+${OBJECTDIR}/src/InoFS.o: src/InoFS.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src
 	${RM} $@.d
-	$(COMPILE.cc) -g -Wall -D_FILE_OFFSET_BITS=64 -I/usr/include/fuse -I/usr/include -Isrc -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/inofs.o src/inofs.cpp
+	$(COMPILE.cc) -g -Wall -D_FILE_OFFSET_BITS=64 -I/usr/include/fuse -Isrc -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/InoFS.o src/InoFS.cpp
 
 # Subprojects
 .build-subprojects:

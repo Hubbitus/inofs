@@ -60,7 +60,6 @@
           <commandlineTool>g++</commandlineTool>
           <incDir>
             <pElem>/usr/include/fuse</pElem>
-            <pElem>/usr/include</pElem>
             <pElem>src</pElem>
           </incDir>
           <preprocessorList>

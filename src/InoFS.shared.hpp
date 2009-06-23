@@ -10,7 +10,7 @@
 
 #include "Utils/Singleton/Singleton.hpp"
 // Shortcut
-#define LOG (Singleton::GetInstance()->GetLog())
+#define LOG (InoFS::Utils::Singleton::GetInstance()->GetLog())
 
 #endif	/* _SHARED_HPP */
 

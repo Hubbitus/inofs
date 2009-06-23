@@ -9,13 +9,16 @@
 #define	_LOG_H
 
 ////////////////////////////////////////////////////////////////////////////////
-
 #include <string>
 #include <fstream>  //std::ofstream
 #include <boost/thread/mutex.hpp>
 
 ////////////////////////////////////////////////////////////////////////////////
 
+namespace InoFS{
+namespace Utils{
+
+////////////////////////////////////////////////////////////////////////////////
 class log{
 private:
      std::string filename_;
@@ -34,4 +37,6 @@ public:
      virtual void addToLog(std::string text);
      virtual void setFileName(std::string filename);
 };
+}//namespace Utils{
+}//namespace InoFS{
 #endif	/* _LOG_H */
