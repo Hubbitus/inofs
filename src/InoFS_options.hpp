@@ -14,11 +14,13 @@ namespace InoFS{
 
 class InoFS_options{
 public:
-	int nonempty;
-	int blkdev;
+	bool nonempty;
 	std::string fsname;
+
 	InoFS_options()
-		: fsname("InoFS"){}; //Defaults
+	: nonempty(false)
+	, fsname("InoFS")
+		{}; //Defaults
 };
 
 }// namespace InoFS

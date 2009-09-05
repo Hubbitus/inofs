@@ -69,7 +69,7 @@ namespace fusexx {
 					return -1;
 				T::self = t;
 
-				self->preinit();
+				argv = self->preinit(&argc, argv);
 
 		    	        // Execute fuse_main
 				return fuse_main (argc, argv, &T::operations, user_data);
@@ -78,9 +78,9 @@ namespace fusexx {
     		static struct fuse_operations operations;
 
 		/**
-		* Called after main initialisation but before fuse_main
-	        **/
-		virtual void preinit(){};
+		* Called after main initialization but before fuse_main
+	     **/
+		virtual char** preinit(int *argc, char **argv){};
 
 		/*
 		 * Overload these functions

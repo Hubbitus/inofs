@@ -5,7 +5,7 @@
 * Created on 11 Май 2009 г., 23:30
 **/
 
-#ifndef _InoFS_HPP
+#ifndef	_InoFS_HPP
 #define	_InoFS_HPP
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -38,14 +38,19 @@ enum{
      void translate_path(const char* path);
      void usage();
 
-     /*
+     /**
      * Main advantages to REimplement fuse_mnt_check_empty(..) (and detect code
      * initially got from it) but I can't just call it - empty/nonempty directories
      * treatment is absoluteley different (fuse function directly write
      * error-message to stderr)
      **/
      virtual bool checkIfMountpointEmpty() throw();
-     virtual void preinit() throw();
+	/**
+	* We can NOT there realloc argv array itself. So, we make bigger copy and
+	* point argv to it ( http://imho.ws/showthread.php?p=1672840#post1672840 ).
+	* For it returning char ** of new argv!
+	**/
+     virtual char ** preinit(int * argc, char **argv) throw();
      /**
      *
      **/

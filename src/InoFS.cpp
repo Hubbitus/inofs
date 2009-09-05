@@ -4,16 +4,15 @@
 *
 * Created on 15 Июнь 2009 г., 23:16
 *
-* Many thanks to rofs, sshfs, virtualfs-c++ projects I'm gott many useful info and examples from its
+* Many thanks to authors of rofs, sshfs, virtualfs-c++ projects I'm got many useful info and examples from its
+* Also it is based on fusexx.hpp C++ binding.
 **/
 #include "InoFS.hpp"
 #include "InoFS.shared.hpp"
 #include "InoFS.exceptions.hpp"
 
 #include <iostream> //Standard stream manipulation
-
 #include <string>
-// # include <string.h>
 
 #include <sys/stat.h> //+ S_ISDIR macroses and states
 
@@ -39,21 +38,28 @@ InoFS_fuse::InoFS_fuse(boost::shared_ptr<InoFS_options> opt)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void
-InoFS_fuse::preinit() throw(){
+char **
+InoFS_fuse::preinit(int * argc, char **argv) throw(){
 LOG->addToLog("Filesystem preinit;");
-	if (!checkIfMountpointEmpty()){
+	if (!this->opts_->nonempty && !checkIfMountpointEmpty()){
 	std::cout << "Mountpoint directory is not empty!" << std::endl
 		<< "Please note, it is not problem for InoFS in most cases opposite to many other fuse filesystems."  << std::endl
 		<< "You just must be enshured what you mount appropriate REPdir to appropriate WCdir (mountpoint)"  << std::endl
 		<< "All content in mountpoint will be syncronised (and may be even deleted, if it deleted in REP)"  << std::endl
 		<< "If you shure what dirs appropriate, please provide -n (or --nonempty) additional option"  << std::endl;
-//	throw InoFS_nonemptymountpoint_exception(std::string("Mountpoint directory is not empty!"));
+	throw InoFS_nonemptymountpoint_exception(std::string("Mountpoint directory is not empty!"));
 	}
 	else{// Ok. Emulate for fuse '-o nonempty' option
-
+	char ** v = (char**)malloc( sizeof(char*) * (++(*argc)) );
+		for (int i=0; i < *argc - 1; i++){
+		v[i] = argv[i]; //This is pointers, I don't want copy strings, because argv will not be freed in any case
+		}
+	const char * opt_nonempty_string = "-ononempty"; // Fore easy memmory allocation
+	v[*argc - 1] = (char*)opt_nonempty_string; //Cast from const
+	argv = v;
 	}
 system(std::string(". ~/.rsync_shared_options ; rsync $RSYNC_SHARED_OPTIONS " + std::string(self->REPdir) + " " + std::string(self->WCdir)).c_str());
+return argv;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -167,8 +173,8 @@ InoFS_fuse * self = (InoFS_fuse *)data;
 		std::exit(0);
 
 		case KEY_NONEMPTY:
-//?		self->opts nonempty =
-		std::exit(0);
+		self->opts_->nonempty = true;
+		return 0;
 
 		case KEY_VERSION:
 		std::cout << "ROFS version: " << InoFS_fuse::Version;
