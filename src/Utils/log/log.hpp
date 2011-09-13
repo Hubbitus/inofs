@@ -29,7 +29,7 @@ public:
      log(std::string filename);
      virtual ~log();
      /* As we can'tjust return say std::endl as std::string because it is manipulator,
-     we just provide reference to opened stream to direct out in suffx and prefix */
+     we just provide reference to opened stream to direct out in suffix and prefix */
      /** Prefix of log string. Common use: out date and separator; **/
      virtual void prefix(std::ofstream& s);
      /** Suffix of log string. Common use: s << std::endl **/

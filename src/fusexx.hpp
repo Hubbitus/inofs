@@ -80,7 +80,7 @@ namespace fusexx {
 		/**
 		* Called after main initialization but before fuse_main
 	     **/
-		virtual char** preinit(int *argc, char **argv){};
+		virtual char** preinit(int *argc, char **argv){ return 0; };
 
 		/*
 		 * Overload these functions

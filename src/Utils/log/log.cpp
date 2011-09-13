@@ -69,15 +69,17 @@ struct timeval tv;
 struct tm* ptm;
 char time_string[24]; // 23 + \0
 
-/* Obtain the time of day, and convert it to a tm struct. */
+// Obtain the time of day, and convert it to a tm struct.
 gettimeofday (&tv, NULL);
 ptm = localtime (&tv.tv_sec);
 
-/* Format the date and time, down to a single second. */
+// Format the date and time, down to a single second.
 strftime(time_string, sizeof (time_string), "%Y-%m-%d %H:%M:%S", ptm);
-/* Compute milliseconds from microseconds. */
-/* Print the formatted time, in seconds, followed by a decimal point
-     and the milliseconds. */
+/**
+* Compute milliseconds from microseconds.
+* Print the formatted time, in seconds, followed by a decimal point
+*	and the milliseconds.
+**/
 sprintf (time_string, "%s.%03ld", time_string, tv.tv_usec / 1000);
 s << time_string << ": ";
 }

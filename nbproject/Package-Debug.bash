@@ -9,7 +9,7 @@ TOP=`pwd`
 CND_PLATFORM=GNU-Linux-x86
 CND_CONF=Debug
 CND_DISTDIR=dist
-TMPDIR=build/${CND_CONF}/${CND_PLATFORM}/tmp-packaging
+NBTMPDIR=build/${CND_CONF}/${CND_PLATFORM}/tmp-packaging
 TMPDIRNAME=tmp-packaging
 OUTPUT_PATH=${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/inofs
 OUTPUT_BASENAME=inofs
@@ -53,18 +53,18 @@ function copyFileToTmpDir
 # Setup
 cd "${TOP}"
 mkdir -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/package
-rm -rf ${TMPDIR}
-mkdir -p ${TMPDIR}
+rm -rf ${NBTMPDIR}
+mkdir -p ${NBTMPDIR}
 
 # Copy files and create directories and links
 cd "${TOP}"
-makeDirectory ${TMPDIR}//usr/bin
-copyFileToTmpDir "${OUTPUT_PATH}" "${TMPDIR}/${PACKAGE_TOP_DIR}bin/${OUTPUT_BASENAME}" 0755
+makeDirectory "${NBTMPDIR}//usr/bin"
+copyFileToTmpDir "${OUTPUT_PATH}" "${NBTMPDIR}/${PACKAGE_TOP_DIR}bin/${OUTPUT_BASENAME}" 0755
 
 
 # Ensure proper rpm build environment
 RPMMACROS=~/.rpmmacros
-NBTOPDIR=~/.netbeans/6.5/cnd2/rpms
+NBTOPDIR=~/.netbeans/6.8/cnd3/rpms
 
 if [ ! -f ${RPMMACROS} ]
 then
@@ -84,11 +84,11 @@ mkdir -p ${NBTOPDIR}/RPMS
 
 # Create spec file
 cd "${TOP}"
-SPEC_FILE=${TMPDIR}/../${OUTPUT_BASENAME}.spec
+SPEC_FILE=${NBTMPDIR}/../${OUTPUT_BASENAME}.spec
 rm -f ${SPEC_FILE}
 
 cd "${TOP}"
-echo BuildRoot: ${TOP}/${TMPDIR} >> ${SPEC_FILE}
+echo BuildRoot: ${TOP}/${NBTMPDIR} >> ${SPEC_FILE}
 echo Summary: Sumary... >> ${SPEC_FILE}
 echo Name: inofs.fusexx >> ${SPEC_FILE}
 echo Version: 1.0 >> ${SPEC_FILE}
@@ -104,7 +104,7 @@ echo '%dir' >> ${SPEC_FILE}
 
 # Create RPM Package
 cd "${TOP}"
-LOG_FILE=${TMPDIR}/../${OUTPUT_BASENAME}.log
+LOG_FILE=${NBTMPDIR}/../${OUTPUT_BASENAME}.log
 rpmbuild  -bb ${SPEC_FILE} > ${LOG_FILE}
 checkReturnCode
 cat ${LOG_FILE}
@@ -116,4 +116,4 @@ echo RPM: ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/package/${RPM_NAME}
 
 # Cleanup
 cd "${TOP}"
-rm -rf ${TMPDIR}
+rm -rf ${NBTMPDIR}
