@@ -17,36 +17,37 @@ RANLIB=ranlib
 CC=gcc
 CCC=g++
 CXX=g++
-FC=
+FC=gfortran
 AS=as
 
 # Macros
 CND_PLATFORM=GNU-Linux-x86
 CND_CONF=Debug
 CND_DISTDIR=dist
+CND_BUILDDIR=build
 
 # Include project Makefile
 include Makefile
 
 # Object Directory
-OBJECTDIR=build/${CND_CONF}/${CND_PLATFORM}
+OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/src/Utils/log/log.o \
 	${OBJECTDIR}/src/main.o \
+	${OBJECTDIR}/src/pstream_exec/pstream_exec.o \
 	${OBJECTDIR}/src/InoFS.o \
 	${OBJECTDIR}/src/InoFS_options.o \
 	${OBJECTDIR}/src/Utils/Singleton/Singleton.o \
 	${OBJECTDIR}/src/InoFS.exceptions.o
 
 # Test Directory
-TESTDIR=build/${CND_CONF}/${CND_PLATFORM}/tests
+TESTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}/tests
 
 # Test Files
 TESTFILES= \
-	${TESTDIR}/TestFiles/f1 \
-	${TESTDIR}/TestFiles/f2
+	${TESTDIR}/TestFiles/f3
 
 # C Compiler Flags
 CFLAGS=
@@ -66,10 +67,10 @@ LDLIBSOPTIONS=-lfuse -lboost_thread-mt -lboost_regex-mt
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-Debug.mk dist/Debug/GNU-Linux-x86/inofs
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/inofs
 
-dist/Debug/GNU-Linux-x86/inofs: ${OBJECTFILES}
-	${MKDIR} -p dist/Debug/GNU-Linux-x86
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/inofs: ${OBJECTFILES}
+	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/inofs ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
 ${OBJECTDIR}/src/Utils/log/log.o: src/Utils/log/log.cpp 
@@ -81,6 +82,11 @@ ${OBJECTDIR}/src/main.o: src/main.cpp
 	${MKDIR} -p ${OBJECTDIR}/src
 	${RM} $@.d
 	$(COMPILE.cc) -g -Werror -D_FILE_OFFSET_BITS=64 -I/usr/include -I/usr/include/fuse -Isrc -I/usr/include/c++/4.6.0 -I/usr/include/c++/4.6.0/i686-redhat-linux -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/main.o src/main.cpp
+
+${OBJECTDIR}/src/pstream_exec/pstream_exec.o: src/pstream_exec/pstream_exec.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/pstream_exec
+	${RM} $@.d
+	$(COMPILE.cc) -g -Werror -D_FILE_OFFSET_BITS=64 -I/usr/include -I/usr/include/fuse -Isrc -I/usr/include/c++/4.6.0 -I/usr/include/c++/4.6.0/i686-redhat-linux -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/pstream_exec/pstream_exec.o src/pstream_exec/pstream_exec.cpp
 
 ${OBJECTDIR}/src/InoFS.o: src/InoFS.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src
@@ -107,28 +113,24 @@ ${OBJECTDIR}/src/InoFS.exceptions.o: src/InoFS.exceptions.cpp
 
 # Build Test Targets
 .build-tests-conf: .build-conf ${TESTFILES}
-${TESTDIR}/TestFiles/f1: ${TESTDIR}/tests/newtestclass.o ${OBJECTFILES:%.o=%_nomain.o}
+${TESTDIR}/TestFiles/f3: ${TESTDIR}/src/tests/psexectest.o ${TESTDIR}/src/tests/psexectestrunner.o ${OBJECTFILES:%.o=%_nomain.o}
 	${MKDIR} -p ${TESTDIR}/TestFiles
-	${LINK.cc} -o ${TESTDIR}/TestFiles/f1 $^ ${LDLIBSOPTIONS} 
-
-${TESTDIR}/TestFiles/f2: ${TESTDIR}/tests/newtestrunner.o ${OBJECTFILES:%.o=%_nomain.o}
-	${MKDIR} -p ${TESTDIR}/TestFiles
-	${LINK.cc} -o ${TESTDIR}/TestFiles/f2 $^ ${LDLIBSOPTIONS} -lcppunit 
+	${LINK.cc}   -o ${TESTDIR}/TestFiles/f3 $^ ${LDLIBSOPTIONS} -lcppunit 
 
 
-${TESTDIR}/tests/newtestclass.o: tests/newtestclass.cpp 
-	${MKDIR} -p ${TESTDIR}/tests
+${TESTDIR}/src/tests/psexectest.o: src/tests/psexectest.cpp 
+	${MKDIR} -p ${TESTDIR}/src/tests
 	${RM} $@.d
-	$(COMPILE.cc) -g -Werror -D_FILE_OFFSET_BITS=64 -I. -I. -I/usr/include -I/usr/include/fuse -Isrc -I/usr/include/c++/4.6.0 -I/usr/include/c++/4.6.0/i686-redhat-linux -MMD -MP -MF $@.d -o ${TESTDIR}/tests/newtestclass.o tests/newtestclass.cpp
+	$(COMPILE.cc) -g -Werror -D_FILE_OFFSET_BITS=64 -I. -I/usr/include -I/usr/include/fuse -Isrc -I/usr/include/c++/4.6.0 -I/usr/include/c++/4.6.0/i686-redhat-linux -MMD -MP -MF $@.d -o ${TESTDIR}/src/tests/psexectest.o src/tests/psexectest.cpp
 
 
-${TESTDIR}/tests/newtestrunner.o: tests/newtestrunner.cpp 
-	${MKDIR} -p ${TESTDIR}/tests
+${TESTDIR}/src/tests/psexectestrunner.o: src/tests/psexectestrunner.cpp 
+	${MKDIR} -p ${TESTDIR}/src/tests
 	${RM} $@.d
-	$(COMPILE.cc) -g -Werror -D_FILE_OFFSET_BITS=64 -I. -I/usr/include -I/usr/include/fuse -Isrc -I/usr/include/c++/4.6.0 -I/usr/include/c++/4.6.0/i686-redhat-linux -MMD -MP -MF $@.d -o ${TESTDIR}/tests/newtestrunner.o tests/newtestrunner.cpp
+	$(COMPILE.cc) -g -Werror -D_FILE_OFFSET_BITS=64 -I. -I/usr/include -I/usr/include/fuse -Isrc -I/usr/include/c++/4.6.0 -I/usr/include/c++/4.6.0/i686-redhat-linux -MMD -MP -MF $@.d -o ${TESTDIR}/src/tests/psexectestrunner.o src/tests/psexectestrunner.cpp
 
 
-${OBJECTDIR}/src/Utils/log_nomain/log_nomain.o: ${OBJECTDIR}/src/Utils/log/log.o src/Utils/log/log.cpp 
+${OBJECTDIR}/src/Utils/log/log_nomain.o: ${OBJECTDIR}/src/Utils/log/log.o src/Utils/log/log.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/Utils/log
 	@NMOUTPUT=`${NM} ${OBJECTDIR}/src/Utils/log/log.o`; \
 	if (echo "$$NMOUTPUT" | ${GREP} '|main$$') || \
@@ -136,9 +138,9 @@ ${OBJECTDIR}/src/Utils/log_nomain/log_nomain.o: ${OBJECTDIR}/src/Utils/log/log.o
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} $@.d;\
-	    $(COMPILE.cc) -g -Werror -D_FILE_OFFSET_BITS=64 -I/usr/include -I/usr/include/fuse -Isrc -I/usr/include/c++/4.6.0 -I/usr/include/c++/4.6.0/i686-redhat-linux -Dmain=__nomain -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/Utils/log_nomain/log_nomain.o src/Utils/log/log.cpp;\
+	    $(COMPILE.cc) -g -Werror -D_FILE_OFFSET_BITS=64 -I/usr/include -I/usr/include/fuse -Isrc -I/usr/include/c++/4.6.0 -I/usr/include/c++/4.6.0/i686-redhat-linux -Dmain=__nomain -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/Utils/log/log_nomain.o src/Utils/log/log.cpp;\
 	else  \
-	    ${CP} ${OBJECTDIR}/src/Utils/log/log.o ${OBJECTDIR}/src/Utils/log_nomain/log_nomain.o;\
+	    ${CP} ${OBJECTDIR}/src/Utils/log/log.o ${OBJECTDIR}/src/Utils/log/log_nomain.o;\
 	fi
 
 ${OBJECTDIR}/src/main_nomain.o: ${OBJECTDIR}/src/main.o src/main.cpp 
@@ -152,6 +154,19 @@ ${OBJECTDIR}/src/main_nomain.o: ${OBJECTDIR}/src/main.o src/main.cpp
 	    $(COMPILE.cc) -g -Werror -D_FILE_OFFSET_BITS=64 -I/usr/include -I/usr/include/fuse -Isrc -I/usr/include/c++/4.6.0 -I/usr/include/c++/4.6.0/i686-redhat-linux -Dmain=__nomain -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/main_nomain.o src/main.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/src/main.o ${OBJECTDIR}/src/main_nomain.o;\
+	fi
+
+${OBJECTDIR}/src/pstream_exec/pstream_exec_nomain.o: ${OBJECTDIR}/src/pstream_exec/pstream_exec.o src/pstream_exec/pstream_exec.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/pstream_exec
+	@NMOUTPUT=`${NM} ${OBJECTDIR}/src/pstream_exec/pstream_exec.o`; \
+	if (echo "$$NMOUTPUT" | ${GREP} '|main$$') || \
+	   (echo "$$NMOUTPUT" | ${GREP} 'T main$$') || \
+	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
+	then  \
+	    ${RM} $@.d;\
+	    $(COMPILE.cc) -g -Werror -D_FILE_OFFSET_BITS=64 -I/usr/include -I/usr/include/fuse -Isrc -I/usr/include/c++/4.6.0 -I/usr/include/c++/4.6.0/i686-redhat-linux -Dmain=__nomain -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/pstream_exec/pstream_exec_nomain.o src/pstream_exec/pstream_exec.cpp;\
+	else  \
+	    ${CP} ${OBJECTDIR}/src/pstream_exec/pstream_exec.o ${OBJECTDIR}/src/pstream_exec/pstream_exec_nomain.o;\
 	fi
 
 ${OBJECTDIR}/src/InoFS_nomain.o: ${OBJECTDIR}/src/InoFS.o src/InoFS.cpp 
@@ -180,7 +195,7 @@ ${OBJECTDIR}/src/InoFS_options_nomain.o: ${OBJECTDIR}/src/InoFS_options.o src/In
 	    ${CP} ${OBJECTDIR}/src/InoFS_options.o ${OBJECTDIR}/src/InoFS_options_nomain.o;\
 	fi
 
-${OBJECTDIR}/src/Utils/Singleton_nomain/Singleton_nomain.o: ${OBJECTDIR}/src/Utils/Singleton/Singleton.o src/Utils/Singleton/Singleton.cpp 
+${OBJECTDIR}/src/Utils/Singleton/Singleton_nomain.o: ${OBJECTDIR}/src/Utils/Singleton/Singleton.o src/Utils/Singleton/Singleton.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/Utils/Singleton
 	@NMOUTPUT=`${NM} ${OBJECTDIR}/src/Utils/Singleton/Singleton.o`; \
 	if (echo "$$NMOUTPUT" | ${GREP} '|main$$') || \
@@ -188,12 +203,12 @@ ${OBJECTDIR}/src/Utils/Singleton_nomain/Singleton_nomain.o: ${OBJECTDIR}/src/Uti
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} $@.d;\
-	    $(COMPILE.cc) -g -Werror -D_FILE_OFFSET_BITS=64 -I/usr/include -I/usr/include/fuse -Isrc -I/usr/include/c++/4.6.0 -I/usr/include/c++/4.6.0/i686-redhat-linux -Dmain=__nomain -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/Utils/Singleton_nomain/Singleton_nomain.o src/Utils/Singleton/Singleton.cpp;\
+	    $(COMPILE.cc) -g -Werror -D_FILE_OFFSET_BITS=64 -I/usr/include -I/usr/include/fuse -Isrc -I/usr/include/c++/4.6.0 -I/usr/include/c++/4.6.0/i686-redhat-linux -Dmain=__nomain -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/Utils/Singleton/Singleton_nomain.o src/Utils/Singleton/Singleton.cpp;\
 	else  \
-	    ${CP} ${OBJECTDIR}/src/Utils/Singleton/Singleton.o ${OBJECTDIR}/src/Utils/Singleton_nomain/Singleton_nomain.o;\
+	    ${CP} ${OBJECTDIR}/src/Utils/Singleton/Singleton.o ${OBJECTDIR}/src/Utils/Singleton/Singleton_nomain.o;\
 	fi
 
-${OBJECTDIR}/src/InoFS_nomain.exceptions.o: ${OBJECTDIR}/src/InoFS.exceptions.o src/InoFS.exceptions.cpp 
+${OBJECTDIR}/src/InoFS.exceptions_nomain.o: ${OBJECTDIR}/src/InoFS.exceptions.o src/InoFS.exceptions.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src
 	@NMOUTPUT=`${NM} ${OBJECTDIR}/src/InoFS.exceptions.o`; \
 	if (echo "$$NMOUTPUT" | ${GREP} '|main$$') || \
@@ -201,25 +216,24 @@ ${OBJECTDIR}/src/InoFS_nomain.exceptions.o: ${OBJECTDIR}/src/InoFS.exceptions.o 
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} $@.d;\
-	    $(COMPILE.cc) -g -Werror -D_FILE_OFFSET_BITS=64 -I/usr/include -I/usr/include/fuse -Isrc -I/usr/include/c++/4.6.0 -I/usr/include/c++/4.6.0/i686-redhat-linux -Dmain=__nomain -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/InoFS_nomain.exceptions.o src/InoFS.exceptions.cpp;\
+	    $(COMPILE.cc) -g -Werror -D_FILE_OFFSET_BITS=64 -I/usr/include -I/usr/include/fuse -Isrc -I/usr/include/c++/4.6.0 -I/usr/include/c++/4.6.0/i686-redhat-linux -Dmain=__nomain -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/InoFS.exceptions_nomain.o src/InoFS.exceptions.cpp;\
 	else  \
-	    ${CP} ${OBJECTDIR}/src/InoFS.exceptions.o ${OBJECTDIR}/src/InoFS_nomain.exceptions.o;\
+	    ${CP} ${OBJECTDIR}/src/InoFS.exceptions.o ${OBJECTDIR}/src/InoFS.exceptions_nomain.o;\
 	fi
 
 # Run Test Targets
 .test-conf:
 	@if [ "${TEST}" = "" ]; \
 	then  \
-	    ${TESTDIR}/TestFiles/f1 || true; \
-	    ${TESTDIR}/TestFiles/f2 || true; \
+	    ${TESTDIR}/TestFiles/f3 || true; \
 	else  \
 	    ./${TEST} || true; \
 	fi
 
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
-	${RM} -r build/Debug
-	${RM} dist/Debug/GNU-Linux-x86/inofs
+	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
+	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/inofs
 
 # Subprojects
 .clean-subprojects:

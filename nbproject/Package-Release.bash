@@ -9,7 +9,8 @@ TOP=`pwd`
 CND_PLATFORM=GNU-Linux-x86
 CND_CONF=Release
 CND_DISTDIR=dist
-NBTMPDIR=build/${CND_CONF}/${CND_PLATFORM}/tmp-packaging
+CND_BUILDDIR=build
+NBTMPDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}/tmp-packaging
 TMPDIRNAME=tmp-packaging
 OUTPUT_PATH=${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/inofs.fusexx
 OUTPUT_BASENAME=inofs.fusexx
@@ -64,7 +65,7 @@ copyFileToTmpDir "${OUTPUT_PATH}" "${NBTMPDIR}/${PACKAGE_TOP_DIR}bin/${OUTPUT_BA
 
 # Ensure proper rpm build environment
 RPMMACROS=~/.rpmmacros
-NBTOPDIR=~/.netbeans/6.8/cnd3/rpms
+NBTOPDIR=/tmp/cnd/rpms
 
 if [ ! -f ${RPMMACROS} ]
 then

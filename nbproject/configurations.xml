@@ -1,11 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="69">
-  <logicalFolder name="root" displayName="root" projectFiles="true">
+<configurationDescriptor version="79">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
                    projectFiles="true">
     </logicalFolder>
     <logicalFolder name="src" displayName="src" projectFiles="true">
+      <logicalFolder name="pstream_exec"
+                     displayName="pstream_exec"
+                     projectFiles="true">
+        <logicalFolder name="pstreams-0.7.0"
+                       displayName="pstreams-0.7.0"
+                       projectFiles="true">
+          <itemPath>src/pstream_exec/pstreams-0.7.0/AUTHORS</itemPath>
+          <itemPath>src/pstream_exec/pstreams-0.7.0/COPYING.LIB</itemPath>
+          <itemPath>src/pstream_exec/pstreams-0.7.0/ChangeLog</itemPath>
+          <itemPath>src/pstream_exec/pstreams-0.7.0/Doxyfile</itemPath>
+          <itemPath>src/pstream_exec/pstreams-0.7.0/INSTALL</itemPath>
+          <itemPath>src/pstream_exec/pstreams-0.7.0/MANIFEST</itemPath>
+          <itemPath>src/pstream_exec/pstreams-0.7.0/Makefile</itemPath>
+          <itemPath>src/pstream_exec/pstreams-0.7.0/README</itemPath>
+          <itemPath>src/pstream_exec/pstreams-0.7.0/mainpage.html</itemPath>
+          <itemPath>src/pstream_exec/pstreams-0.7.0/pstream.h</itemPath>
+          <itemPath>src/pstream_exec/pstreams-0.7.0/pstreams-devel.spec</itemPath>
+          <itemPath>src/pstream_exec/pstreams-0.7.0/test_minimum.cc</itemPath>
+          <itemPath>src/pstream_exec/pstreams-0.7.0/test_pstreams.cc</itemPath>
+        </logicalFolder>
+        <itemPath>src/pstream_exec/pstream.h</itemPath>
+        <itemPath>src/pstream_exec/pstream_exec.cpp</itemPath>
+        <itemPath>src/pstream_exec/pstream_exec.h</itemPath>
+      </logicalFolder>
       <logicalFolder name="Utils" displayName="Utils" projectFiles="true">
         <logicalFolder name="log" displayName="log" projectFiles="true">
           <itemPath>src/Utils/log/log.cpp</itemPath>
@@ -36,17 +60,13 @@
                    displayName="Test Files"
                    projectFiles="false"
                    kind="TEST_LOGICAL_FOLDER">
-      <logicalFolder name="f1"
-                     displayName="New CppUnit Test"
+      <logicalFolder name="f3"
+                     displayName="Psexec exec"
                      projectFiles="true"
                      kind="TEST">
-        <itemPath>tests/newtestclass.cpp</itemPath>
-      </logicalFolder>
-      <logicalFolder name="f2"
-                     displayName="New CppUnit Test"
-                     projectFiles="true"
-                     kind="TEST">
-        <itemPath>tests/newtestclass.h</itemPath>
+        <itemPath>src/tests/psexectest.cpp</itemPath>
+        <itemPath>src/tests/psexectest.h</itemPath>
+        <itemPath>src/tests/psexectestrunner.cpp</itemPath>
       </logicalFolder>
     </logicalFolder>
   </logicalFolder>
@@ -58,9 +78,8 @@
   <confs>
     <conf name="Debug" type="1">
       <toolsSet>
-        <developmentServer>localhost</developmentServer>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>GNU|GNU</compilerSet>
-        <platform>2</platform>
       </toolsSet>
       <compileType>
         <cTool>
@@ -121,10 +140,12 @@
           <incDir>
             <pElem>.</pElem>
             <pElem>.</pElem>
+            <pElem>.</pElem>
           </incDir>
         </cTool>
         <ccTool>
           <incDir>
+            <pElem>.</pElem>
             <pElem>.</pElem>
             <pElem>.</pElem>
           </incDir>
@@ -137,10 +158,12 @@
         <cTool>
           <incDir>
             <pElem>.</pElem>
+            <pElem>.</pElem>
           </incDir>
         </cTool>
         <ccTool>
           <incDir>
+            <pElem>.</pElem>
             <pElem>.</pElem>
           </incDir>
         </ccTool>
@@ -151,12 +174,39 @@
           </linkerLibItems>
         </linkerTool>
       </folder>
+      <folder path="TestFiles/f3">
+        <cTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+        <linkerTool>
+          <output>${TESTDIR}/TestFiles/f3</output>
+          <linkerLibItems>
+            <linkerLibStdlibItem>CppUnit</linkerLibStdlibItem>
+          </linkerLibItems>
+        </linkerTool>
+      </folder>
+      <item path="src/pstream_exec/pstreams-0.7.0/test_minimum.cc"
+            ex="true"
+            tool="1"
+            flavor="0">
+      </item>
+      <item path="src/pstream_exec/pstreams-0.7.0/test_pstreams.cc"
+            ex="true"
+            tool="1"
+            flavor="0">
+      </item>
     </conf>
     <conf name="Release" type="1">
       <toolsSet>
-        <developmentServer>localhost</developmentServer>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>GNU|GNU</compilerSet>
-        <platform>2</platform>
       </toolsSet>
       <compileType>
         <cTool>
@@ -194,10 +244,12 @@
           <incDir>
             <pElem>.</pElem>
             <pElem>.</pElem>
+            <pElem>.</pElem>
           </incDir>
         </cTool>
         <ccTool>
           <incDir>
+            <pElem>.</pElem>
             <pElem>.</pElem>
             <pElem>.</pElem>
           </incDir>
@@ -210,6 +262,23 @@
         <cTool>
           <incDir>
             <pElem>.</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+        <linkerTool>
+          <output>${TESTDIR}/TestFiles/f2</output>
+        </linkerTool>
+      </folder>
+      <folder path="TestFiles/f3">
+        <cTool>
+          <incDir>
+            <pElem>.</pElem>
           </incDir>
         </cTool>
         <ccTool>
@@ -218,7 +287,7 @@
           </incDir>
         </ccTool>
         <linkerTool>
-          <output>${TESTDIR}/TestFiles/f2</output>
+          <output>${TESTDIR}/TestFiles/f3</output>
         </linkerTool>
       </folder>
     </conf>

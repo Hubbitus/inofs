@@ -12,16 +12,16 @@ using namespace std;
 ////////////////////////////////////////////////////////////////////////////////
 
 static struct fuse_opt inofs_opts[] = {
-    FUSE_OPT_KEY("-h",		InoFS_fuse::KEY_HELP),
-    FUSE_OPT_KEY("--help",	InoFS_fuse::KEY_HELP),
-    FUSE_OPT_KEY("-V",		InoFS_fuse::KEY_VERSION),
-    FUSE_OPT_KEY("--version",	InoFS_fuse::KEY_VERSION),
-    FUSE_OPT_KEY("-l=",		InoFS_fuse::KEY_LOGFILE),
-    FUSE_OPT_KEY("-l ",		InoFS_fuse::KEY_LOGFILE),
-    FUSE_OPT_KEY("--logfile=",InoFS_fuse::KEY_LOGFILE),
-    FUSE_OPT_KEY("--logfile ",InoFS_fuse::KEY_LOGFILE),
-    FUSE_OPT_KEY("-n",		InoFS_fuse::KEY_NONEMPTY),
-    FUSE_OPT_KEY("--nonempty",InoFS_fuse::KEY_NONEMPTY),
+    FUSE_OPT_KEY("-h",			InoFS_fuse::KEY_HELP),
+    FUSE_OPT_KEY("--help",		InoFS_fuse::KEY_HELP),
+    FUSE_OPT_KEY("-V",			InoFS_fuse::KEY_VERSION),
+    FUSE_OPT_KEY("--version",		InoFS_fuse::KEY_VERSION),
+    FUSE_OPT_KEY("-l=",			InoFS_fuse::KEY_LOGFILE),
+    FUSE_OPT_KEY("-l ",			InoFS_fuse::KEY_LOGFILE),
+    FUSE_OPT_KEY("--logfile=",	InoFS_fuse::KEY_LOGFILE),
+    FUSE_OPT_KEY("--logfile ",	InoFS_fuse::KEY_LOGFILE),
+    FUSE_OPT_KEY("-n",			InoFS_fuse::KEY_NONEMPTY),
+    FUSE_OPT_KEY("--nonempty",	InoFS_fuse::KEY_NONEMPTY),
 //    FUSE_OPT_END // It prodice error in C++, so use direct NULL instead:
     { NULL } // It is C
 };
