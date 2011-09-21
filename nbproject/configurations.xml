@@ -95,11 +95,12 @@
         <ccTool>
           <commandlineTool>g++</commandlineTool>
           <incDir>
+            <pElem>src</pElem>
             <pElem>/usr/include</pElem>
             <pElem>/usr/include/fuse</pElem>
-            <pElem>src</pElem>
             <pElem>/usr/include/c++/4.6.0</pElem>
             <pElem>/usr/include/c++/4.6.0/i686-redhat-linux</pElem>
+            <pElem>/usr/include/pstreams</pElem>
           </incDir>
           <preprocessorList>
             <Elem>_FILE_OFFSET_BITS=64</Elem>

@@ -1,2 +1,2 @@
 
-1) Pack separate pstreams and unbundle it.
+1) Implement remote operations over pstreams_exec
