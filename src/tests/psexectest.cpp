@@ -37,3 +37,16 @@ void psexectest::testExec() {
 	}
 }
 
+void psexectest::testSshExec() {
+	pstream_exec _pstream_exec("ssh localhost " + pstream_exec::BASE_CMD);
+	
+	pstream_exec::exec_return result = _pstream_exec.exec("echo 123");
+	if (result->first == "123" && result->second == "") {
+		CPPUNIT_ASSERT(false);
+	}
+	
+	result = _pstream_exec.exec("echo 123 >&2");
+	if (result->first == "" && result->second == "123") {
+		CPPUNIT_ASSERT(false);
+	}
+}

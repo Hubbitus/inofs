@@ -14,6 +14,7 @@ class psexectest : public CPPUNIT_NS::TestFixture {
 	CPPUNIT_TEST_SUITE(psexectest);
 
 	CPPUNIT_TEST(testExec);
+	CPPUNIT_TEST(testSshExec);
 
 	CPPUNIT_TEST_SUITE_END();
 
@@ -25,8 +26,7 @@ public:
 
 private:
 	void testExec();
-
+	void testSshExec();
 };
 
 #endif	/* PSEXECTEST_H */
-

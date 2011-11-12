@@ -1,2 +1,3 @@
 
-1) Implement remote operations over pstreams_exec
+1) Implement remote operations over pstreams_exec.
+2) Add reconnect options and capability as well as connection breaks handling.

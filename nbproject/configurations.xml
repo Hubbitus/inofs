@@ -9,24 +9,6 @@
       <logicalFolder name="pstream_exec"
                      displayName="pstream_exec"
                      projectFiles="true">
-        <logicalFolder name="pstreams-0.7.0"
-                       displayName="pstreams-0.7.0"
-                       projectFiles="true">
-          <itemPath>src/pstream_exec/pstreams-0.7.0/AUTHORS</itemPath>
-          <itemPath>src/pstream_exec/pstreams-0.7.0/COPYING.LIB</itemPath>
-          <itemPath>src/pstream_exec/pstreams-0.7.0/ChangeLog</itemPath>
-          <itemPath>src/pstream_exec/pstreams-0.7.0/Doxyfile</itemPath>
-          <itemPath>src/pstream_exec/pstreams-0.7.0/INSTALL</itemPath>
-          <itemPath>src/pstream_exec/pstreams-0.7.0/MANIFEST</itemPath>
-          <itemPath>src/pstream_exec/pstreams-0.7.0/Makefile</itemPath>
-          <itemPath>src/pstream_exec/pstreams-0.7.0/README</itemPath>
-          <itemPath>src/pstream_exec/pstreams-0.7.0/mainpage.html</itemPath>
-          <itemPath>src/pstream_exec/pstreams-0.7.0/pstream.h</itemPath>
-          <itemPath>src/pstream_exec/pstreams-0.7.0/pstreams-devel.spec</itemPath>
-          <itemPath>src/pstream_exec/pstreams-0.7.0/test_minimum.cc</itemPath>
-          <itemPath>src/pstream_exec/pstreams-0.7.0/test_pstreams.cc</itemPath>
-        </logicalFolder>
-        <itemPath>src/pstream_exec/pstream.h</itemPath>
         <itemPath>src/pstream_exec/pstream_exec.cpp</itemPath>
         <itemPath>src/pstream_exec/pstream_exec.h</itemPath>
       </logicalFolder>
@@ -48,7 +30,6 @@
       <itemPath>src/InoFS_options.cpp</itemPath>
       <itemPath>src/InoFS_options.hpp</itemPath>
       <itemPath>src/fusexx.hpp</itemPath>
-      <itemPath>src/inofs1.hpp</itemPath>
       <itemPath>src/main.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
@@ -86,6 +67,11 @@
           <incDir>
             <pElem>/usr/include/fuse</pElem>
             <pElem>/usr/include</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
           </incDir>
           <preprocessorList>
             <Elem>_FILE_OFFSET_BITS=64</Elem>
@@ -101,6 +87,11 @@
             <pElem>/usr/include/c++/4.6.0</pElem>
             <pElem>/usr/include/c++/4.6.0/i686-redhat-linux</pElem>
             <pElem>/usr/include/pstreams</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
           </incDir>
           <preprocessorList>
             <Elem>_FILE_OFFSET_BITS=64</Elem>
@@ -108,7 +99,7 @@
           <warningLevel>3</warningLevel>
         </ccTool>
         <linkerTool>
-          <output>${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/inofs</output>
+          <output>${TESTDIR}/TestFiles/f2</output>
           <linkerLibItems>
             <linkerLibLibItem>fuse</linkerLibLibItem>
             <linkerLibLibItem>boost_thread-mt</linkerLibLibItem>
@@ -136,53 +127,16 @@
           <packInfoListElem name="%description" value="Description..." mandatory="true"/>
         </packInfoList>
       </packaging>
-      <folder path="TestFiles/f1">
-        <cTool>
-          <incDir>
-            <pElem>.</pElem>
-            <pElem>.</pElem>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-        <ccTool>
-          <incDir>
-            <pElem>.</pElem>
-            <pElem>.</pElem>
-            <pElem>.</pElem>
-          </incDir>
-        </ccTool>
-        <linkerTool>
-          <output>${TESTDIR}/TestFiles/f1</output>
-        </linkerTool>
-      </folder>
-      <folder path="TestFiles/f2">
-        <cTool>
-          <incDir>
-            <pElem>.</pElem>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-        <ccTool>
-          <incDir>
-            <pElem>.</pElem>
-            <pElem>.</pElem>
-          </incDir>
-        </ccTool>
-        <linkerTool>
-          <output>${TESTDIR}/TestFiles/f2</output>
-          <linkerLibItems>
-            <linkerLibStdlibItem>CppUnit</linkerLibStdlibItem>
-          </linkerLibItems>
-        </linkerTool>
-      </folder>
       <folder path="TestFiles/f3">
         <cTool>
           <incDir>
             <pElem>.</pElem>
+            <pElem>.</pElem>
           </incDir>
         </cTool>
         <ccTool>
           <incDir>
+            <pElem>.</pElem>
             <pElem>.</pElem>
           </incDir>
         </ccTool>
@@ -193,16 +147,6 @@
           </linkerLibItems>
         </linkerTool>
       </folder>
-      <item path="src/pstream_exec/pstreams-0.7.0/test_minimum.cc"
-            ex="true"
-            tool="1"
-            flavor="0">
-      </item>
-      <item path="src/pstream_exec/pstreams-0.7.0/test_pstreams.cc"
-            ex="true"
-            tool="1"
-            flavor="0">
-      </item>
     </conf>
     <conf name="Release" type="1">
       <toolsSet>
@@ -212,13 +156,30 @@
       <compileType>
         <cTool>
           <developmentMode>5</developmentMode>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+          </incDir>
         </cTool>
         <ccTool>
           <developmentMode>5</developmentMode>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+          </incDir>
         </ccTool>
         <fortranCompilerTool>
           <developmentMode>5</developmentMode>
         </fortranCompilerTool>
+        <linkerTool>
+          <output>${TESTDIR}/TestFiles/f2</output>
+        </linkerTool>
       </compileType>
       <packaging>
         <packType>RPM</packType>
@@ -240,50 +201,16 @@
           <packInfoListElem name="%description" value="Description..." mandatory="true"/>
         </packInfoList>
       </packaging>
-      <folder path="TestFiles/f1">
-        <cTool>
-          <incDir>
-            <pElem>.</pElem>
-            <pElem>.</pElem>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-        <ccTool>
-          <incDir>
-            <pElem>.</pElem>
-            <pElem>.</pElem>
-            <pElem>.</pElem>
-          </incDir>
-        </ccTool>
-        <linkerTool>
-          <output>${TESTDIR}/TestFiles/f1</output>
-        </linkerTool>
-      </folder>
-      <folder path="TestFiles/f2">
-        <cTool>
-          <incDir>
-            <pElem>.</pElem>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-        <ccTool>
-          <incDir>
-            <pElem>.</pElem>
-            <pElem>.</pElem>
-          </incDir>
-        </ccTool>
-        <linkerTool>
-          <output>${TESTDIR}/TestFiles/f2</output>
-        </linkerTool>
-      </folder>
       <folder path="TestFiles/f3">
         <cTool>
           <incDir>
             <pElem>.</pElem>
+            <pElem>.</pElem>
           </incDir>
         </cTool>
         <ccTool>
           <incDir>
+            <pElem>.</pElem>
             <pElem>.</pElem>
           </incDir>
         </ccTool>

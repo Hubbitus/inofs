@@ -20,7 +20,7 @@ public:
 	typedef std::pair<std::string, std::string> exec_pair;
 	typedef boost::shared_ptr<exec_pair> exec_return;
 
-	pstream_exec();
+	pstream_exec(std::string const base_command = pstream_exec::BASE_CMD);
 	virtual ~pstream_exec();
 
 	virtual exec_return exec(std::string cmd);

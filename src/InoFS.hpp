@@ -13,6 +13,7 @@
 #include "fusexx.hpp"
 #include "Utils/log/log.hpp"
 #include "InoFS_options.hpp"
+#include "pstream_exec/pstream_exec.h"
 
 #include <string>
 #include <boost/shared_ptr.hpp>
@@ -24,14 +25,16 @@ namespace InoFS{
 
 class InoFS_fuse : public fusexx::fuse<InoFS_fuse>{
 public:
-static const char* Version; // Inicialisation in .cpp file (see http://bytes.com/groups/cpp/534669-const-char-static-member)
-// To store our REP and WC path
-char *REPdir;
-char *WCdir;
+	static const char* Version; // Initialization in .cpp file (see http://bytes.com/groups/cpp/534669-const-char-static-member)
+	// To store our REP and WC path
+	char *REPdir;
+	char *WCdir;
 
-enum{
-    KEY_HELP, KEY_VERSION, KEY_LOGFILE, KEY_NONEMPTY
-};
+	static struct fuse_opt inofs_options[];
+	
+	enum{
+	    KEY_HELP, KEY_VERSION, KEY_LOGFILE, KEY_NONEMPTY
+	};
 
      InoFS_fuse(boost::shared_ptr<InoFS_options> opt); // Constructor
 
@@ -40,19 +43,23 @@ enum{
 
      /**
      * Main advantages to REimplement fuse_mnt_check_empty(..) (and detect code
-     * initially got from it) but I can't just call it - empty/nonempty directories
-     * treatment is absoluteley different (fuse function directly write
+     * initial got from it) but I can't just call it - empty/nonempty directories
+     * treatment is absolutely different (fuse function directly write
      * error-message to stderr)
      **/
-     virtual bool checkIfMountpointEmpty() throw();
+     bool checkIfMountpointEmpty() throw();
 	/**
 	* We can NOT there realloc argv array itself. So, we make bigger copy and
 	* point argv to it ( http://imho.ws/showthread.php?p=1672840#post1672840 ).
 	* For it returning char ** of new argv!
 	**/
-     virtual char ** preinit(int * argc, char **argv) throw();
+     char ** preinit(int * argc, char **argv) throw();
+	/**
+     * Parse options defined in {@see inofs_options}, initialize settings.
+     **/
+     fuse_args parse_opts(int argc, char **argv) throw();
      /**
-     *
+     * Parse one option, call back from fuse_opt_parse
      **/
      static int parse_opt(void *data, const char *arg, int key, struct fuse_args *outargs);
 
@@ -90,8 +97,9 @@ enum{
      static int op_removexattr(const char *path, const char *name);
 
 private:
-std::string m_strTranslatedPath;
-boost::shared_ptr<InoFS_options> opts_;
+	std::string m_strTranslatedPath;
+	boost::shared_ptr<InoFS_options> opts_;
+	pstream_exec remote_;
 };
 
 } //namespace InoFS

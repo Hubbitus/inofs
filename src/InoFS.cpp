@@ -31,6 +31,22 @@ namespace InoFS{
 const char* InoFS_fuse::Version = "0.1";
 
 ////////////////////////////////////////////////////////////////////////////////
+struct fuse_opt InoFS_fuse::inofs_options[] = {
+    FUSE_OPT_KEY("-h",			KEY_HELP),
+    FUSE_OPT_KEY("--help",		KEY_HELP),
+    FUSE_OPT_KEY("-V",			KEY_VERSION),
+    FUSE_OPT_KEY("--version",	KEY_VERSION),
+    FUSE_OPT_KEY("-l=",			KEY_LOGFILE),
+    FUSE_OPT_KEY("-l ",			KEY_LOGFILE),
+    FUSE_OPT_KEY("--logfile=",	KEY_LOGFILE),
+    FUSE_OPT_KEY("--logfile ",	KEY_LOGFILE),
+    FUSE_OPT_KEY("-n",			KEY_NONEMPTY),
+    FUSE_OPT_KEY("--nonempty",	KEY_NONEMPTY),
+//    FUSE_OPT_END // It produce error in C++, so use direct NULL instead:
+    { NULL } // It is C
+};
+////////////////////////////////////////////////////////////////////////////////
+
 InoFS_fuse::InoFS_fuse(boost::shared_ptr<InoFS_options> opt)
     : REPdir(0), WCdir(0){// Constructor
 	if (opt) opts_ = opt;
@@ -46,7 +62,7 @@ LOG->addToLog("Filesystem preinit;");
 		<< "Please note, it is not problem for InoFS in most cases opposite to many other fuse filesystems."  << std::endl
 		<< "You just must be enshured what you mount appropriate REPdir to appropriate WCdir (mountpoint)"  << std::endl
 		<< "All content in mountpoint will be syncronised (and may be even deleted, if it deleted in REP)"  << std::endl
-		<< "If you shure what dirs appropriate, please provide -n (or --nonempty) additional option"  << std::endl;
+		<< "If you sure what dirs appropriate, please provide -n (or --nonempty) additional option"  << std::endl;
 	throw InoFS_nonemptymountpoint_exception(std::string("Mountpoint directory is not empty!"));
 	}
 	else{// Ok. Emulate for fuse '-o nonempty' option
@@ -132,6 +148,27 @@ std::cout << "usage: " << opts_->fsname << " REPdir WCdir [options]" << std::end
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+fuse_args
+InoFS_fuse::parse_opts(int argc, char **argv) throw(){
+	struct fuse_args args = FUSE_ARGS_INIT(argc, argv);
+	int res = fuse_opt_parse(
+		&args,
+		this,
+		inofs_options,
+		parse_opt
+	);
+	if (res != 0){
+		throw new InoFS_optparse_exception("Invalid arguments");
+	}
+	if (0 == REPdir){
+		throw new InoFS_optparse_exception("Missing REPository path");
+	}
+	if (0 == WCdir){
+		throw new InoFS_optparse_exception("Missing Working Copy (WC) path");
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
 int
 InoFS_fuse::parse_opt(void *data, const char *arg, int key, struct fuse_args *outargs){
 InoFS_fuse * self = (InoFS_fuse *)data;
@@ -189,7 +226,6 @@ return 1;
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////// FUSE operations methods
-////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 void *
 InoFS_fuse::op_init (struct fuse_conn_info *conn){

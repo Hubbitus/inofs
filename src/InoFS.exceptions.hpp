@@ -24,6 +24,18 @@ public:
 	  : InoFS_exception(__arg){}
 };
 
+class InoFS_usage_exception : public InoFS_exception{
+public:
+     explicit InoFS_usage_exception(const std::string& __arg)
+	  : InoFS_exception(__arg){}
+};
+
+class InoFS_optparse_exception : public InoFS_exception{
+public:
+     explicit InoFS_optparse_exception(const std::string& __arg)
+	  : InoFS_exception(__arg){}
+};
+
 } //namespace InoFS
 #endif	/* _INOFS_EXCEPTIONS_HPP */
 

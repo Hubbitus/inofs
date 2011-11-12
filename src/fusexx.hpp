@@ -164,7 +164,7 @@ namespace fusexx {
 			 * Protected variables
 			 */
 		protected:
-			// allow static methods to access object methods/ variables using 'self' instead of 'this'
+			// allow static methods to access object methods/variables using 'self' instead of 'this'
 			static T *self;
 	};
 	

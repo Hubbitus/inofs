@@ -12,8 +12,8 @@ const std::string pstream_exec::BASE_CMD = "bash --norc -i";
 
 const std::string pstream_exec::LINE_SEP = "QWERTY_QAZ_ZAQ";
 
-pstream_exec::pstream_exec() :
-process_(pstream_exec::BASE_CMD, redi::pstream::pstdin | redi::pstream::pstdout | redi::pstream::pstderr) {
+pstream_exec::pstream_exec(std::string const base_command) :
+process_(base_command, redi::pstream::pstdin | redi::pstream::pstdout | redi::pstream::pstderr) {
 }
 
 pstream_exec::~pstream_exec(){
@@ -25,10 +25,7 @@ pstream_exec::exec(std::string cmd) {
 	process_ << cmd << "; echo '" << pstream_exec::LINE_SEP << "'; echo '" \
 		<< pstream_exec::LINE_SEP << "' >&2" << std::endl;
 
-	std::string ret;
-	std::string ret_err;
-
-	std::string buff;
+	std::string ret, ret_err, buff;
 
 	while (std::getline(process_.out(), buff)
 		   && buff != pstream_exec::LINE_SEP ){

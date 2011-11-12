@@ -1,3 +1,60 @@
+== For what it needed ==
+I'm big fan of sshfs fuse filesystem. It is really awesome. You are mount remote
+directory over ssh and viola - see all its contents.
+But as web-developer use it from day to day give me several painful of it:
+1) It is really slow. Especially on many small files.
+2) Often it just hangup on reading hundreds files, only restart may help.
+3) It always got all content of files from server. Some caching off course
+	present, but it is not help for example on full text search.
+4) For files different size (buffers mostly on seeking in file I believe) file
+	will be transmits each time in both sides. It again slow and ambiguous
+	traffic.
+5) It does not reflect changes in remote directory until some timeout happened
+	and you are request manual update directory too.
+
+As developer I want mount remote web-server directory and work under project
+like local in preferred IDE.
+With sshfs it mostly possible, but hard. It why inofs born.
+
+== How it works ==
+=== Concepts ===
+1) Your mount remote directory as sshfs do that. For complete it you need have
+still very basic things:
+	- Inofs on local computer
+	- Ssh account on remote
+	- Very basic utilities on remote computer: bash, rsync, inotify-tools (see
+		notes below).
+2) On mount stage FULL CONTENT transfered or synced with local copy via rsync.
+
+	Downside of that meantime - mount time, traffic on first connect and used
+	disk storage. So, all need to be payed. But not all so bad. All sequential
+	mounts (warm cache, nonempty option) will be fast and sufficient.
+3) Then all read file operations performed on local copy.
+
+	You may even use IDE full text search, or perform find usages and many
+	other useful things, all will work as on local project! Is not it cool??
+4) On time any write operation happened (write file, change attribute, time or
+	so on) it immediately reflected on local copy and transfered remote.
+
+	For transfer changes in both sides used great rsync software and protocol.
+	It means among others, what if, for example you want fix only header in
+	4Gb dvd-rip file (fill missing producer, ganre and year), only very-very
+	small amount of data will be transfered and further-more identical files
+	guaranteed on both sides. More example - you do refactoring and replace
+	name of class in many files - it also should be fast and reliable.
+5) What concerned changes on remote side (what may be very useful for real time
+	log monitoring, file creation or so on) used kernel mechanism inotify (from
+	it naming come) to immediately transfer remote changes to mountpoint.
+	Please such event dispatched from modern kernels, it is fast and have no
+	such problems as latency or CPU overhead.
+
+=== Problems ===
+	Off course there also present disadvantages mostly in default file tracking
+	limit in 8092 files or directories and may be missed user space utilities
+	to work with inotify events (inotifywait, inotifywatch). Both trivially
+	fixed if you have root account on system. If not (in case of shared hosting
+	account for example) I plan in the future implement fallback variant with
+	simple pooling of changes, but it is not in my rush todo list.
 
 Old, but very interesting project:
 http://shfs.sourceforge.net/
