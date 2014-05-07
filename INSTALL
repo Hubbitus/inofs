@@ -1,3 +1,3 @@
 
 Now dependencies are:
-	fuse-devel, pstreams-devel, boost-devel
+	fuse-devel, pstreams-devel, boost-devel, cppunit-devel

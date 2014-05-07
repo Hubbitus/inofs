@@ -348,6 +348,7 @@ int res = mknod(self->m_strTranslatedPath.c_str(), mode, rdev);
 	if (res == -1)
 	return -errno;
 
+throw new InoFS_notimplemented_exception("mknod operation is not implemented yet!");
 return 0;
 }
 
@@ -357,10 +358,12 @@ InoFS_fuse::op_mkdir(const char *path, mode_t mode){
 self->translate_path(path);
 LOG->addToLog("InoFS::op_mknod. Path: " + self->m_strTranslatedPath);
 
+// Local implementation:
 int res = mkdir(self->m_strTranslatedPath.c_str(), mode);
 	if (res == -1)
 	return -errno;
 
+self->remote_->exec("mkdir " + self->m_strTranslatedPath); //???
 return 0;
 }
 

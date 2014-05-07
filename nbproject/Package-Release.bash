@@ -10,6 +10,7 @@ CND_PLATFORM=GNU-Linux-x86
 CND_CONF=Release
 CND_DISTDIR=dist
 CND_BUILDDIR=build
+CND_DLIB_EXT=so
 NBTMPDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}/tmp-packaging
 TMPDIRNAME=tmp-packaging
 OUTPUT_PATH=${TESTDIR}/TestFiles/f2
@@ -90,12 +91,12 @@ rm -f ${SPEC_FILE}
 
 cd "${TOP}"
 echo BuildRoot: ${TOP}/${NBTMPDIR} >> ${SPEC_FILE}
-echo Summary: Sumary... >> ${SPEC_FILE}
-echo Name: inofs.fusexx >> ${SPEC_FILE}
-echo Version: 1.0 >> ${SPEC_FILE}
-echo Release: 1 >> ${SPEC_FILE}
-echo Group: Applications/System >> ${SPEC_FILE}
-echo License: BSD-type >> ${SPEC_FILE}
+echo 'Summary: Sumary...' >> ${SPEC_FILE}
+echo 'Name: inofs.fusexx' >> ${SPEC_FILE}
+echo 'Version: 1.0' >> ${SPEC_FILE}
+echo 'Release: 1' >> ${SPEC_FILE}
+echo 'Group: Applications/System' >> ${SPEC_FILE}
+echo 'License: BSD-type' >> ${SPEC_FILE}
 echo '%description' >> ${SPEC_FILE}
 echo 'Description...' >> ${SPEC_FILE}
 echo  >> ${SPEC_FILE}
@@ -106,10 +107,11 @@ echo '%dir' >> ${SPEC_FILE}
 # Create RPM Package
 cd "${TOP}"
 LOG_FILE=${NBTMPDIR}/../${OUTPUT_BASENAME}.log
-rpmbuild  -bb ${SPEC_FILE} > ${LOG_FILE}
+rpmbuild --buildroot ${TOP}/${NBTMPDIR}  -bb ${SPEC_FILE} > ${LOG_FILE}
+makeDirectory "${NBTMPDIR}"
 checkReturnCode
 cat ${LOG_FILE}
-RPM_PATH=`cat $LOG_FILE | grep .rpm | tail -1 |awk -F: '{ print $2 }'`
+RPM_PATH=`cat $LOG_FILE | grep '\.rpm' | tail -1 |awk -F: '{ print $2 }'`
 RPM_NAME=`basename ${RPM_PATH}`
 mv ${RPM_PATH} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/package
 checkReturnCode

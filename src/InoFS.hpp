@@ -63,15 +63,15 @@ public:
      **/
      static int parse_opt(void *data, const char *arg, int key, struct fuse_args *outargs);
 
-     static void *op_init (struct fuse_conn_info *conn);
-     static int op_getattr(const char *path, struct stat *stbuf);
-     static int op_fgetattr(const char *path, struct stat *stbuf, struct fuse_file_info *fi);
-     static int op_access(const char *path, int mask);
-     static int op_readlink(const char *path, char *buf, size_t size);
-     static int op_opendir(const char *path, struct fuse_file_info *fi);
-     static int op_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi);
-     static int op_releasedir(const char *path, struct fuse_file_info *fi);
-     static int op_mknod(const char *path, mode_t mode, dev_t rdev);
+     static void *op_init (struct fuse_conn_info *conn); //+
+     static int op_getattr(const char *path, struct stat *stbuf); //+
+     static int op_fgetattr(const char *path, struct stat *stbuf, struct fuse_file_info *fi); //+
+     static int op_access(const char *path, int mask);//+
+     static int op_readlink(const char *path, char *buf, size_t size);//+
+     static int op_opendir(const char *path, struct fuse_file_info *fi);//+
+     static int op_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi);//+
+     static int op_releasedir(const char *path, struct fuse_file_info *fi); //+
+     static int op_mknod(const char *path, mode_t mode, dev_t rdev);//?-+
      static int op_mkdir(const char *path, mode_t mode);
      static int op_unlink(const char *path);
      static int op_rmdir(const char *path);
