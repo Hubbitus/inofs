@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# Used tutorial: http://habrahabr.ru/post/144626/
+
+# I IS NOT parametrized script, instead snippet to change it over new needs.
+
+SVN_URL=https://svn.code.sf.net/p/inofs/code/trunk
+
+{
+
+rm -rf trunk
+
+# prepare authors file
+#svn log $SVN_URL | grep -P '^r\d+' | awk 'BEGIN{FS=" \\| "}{print $2}' | sort -u > authors
+#exit 1
+
+git svn clone --authors-file=authors --ignore-paths="^(wzor.GET|wzor.REPACK)$" $SVN_URL trunk
+
+pushd trunk
+
+git filter-branch --commit-filter 'git_commit_non_empty_tree "$@"' HEAD
+git svn create-ignore
+
+git branch -rd git-svn
+git config --remove-section svn-remote.svn
+git config --remove-section svn
+rm -rf .git/svn
+
+git gc
+
+# Github:
+git remote add origin git@github.com:Hubbitus/inofs.git
+git push -u origin master
+
+popd
+
+}  2>&1 | tee git-svn.log
